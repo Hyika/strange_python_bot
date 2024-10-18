@@ -19,10 +19,14 @@ class DiscordBot:
         self.gateway_url = 'wss://gateway.discord.gg/'
         self.token = settings['token']
         self.prefix = settings['command_prefix']
-        self.auth_headers = {'Authorization': f'Bot {self.token}'}
+        self.auth_headers = {
+            'Authorization': f'Bot {self.token}',
+        }
         
+        self.last_sent_opcode = -1
         self.heartbeat_interval = 0
         self.seq = 0
+        self.application_id = None
         self.session_id = None
         self.guild_info = None
     
@@ -47,16 +51,6 @@ class DiscordBot:
 
 
     async def gateway_connection(self):
-        async def connect(f):
-            @wraps(wrapper)
-            async def wrapper(*args, **kwargs):
-                payload = f(*args, **kwargs)
-                await websocket.send(json.dumps(payload))
-                response = json.loads(await websocket.recv())
-                return response
-            return wrapper
-        
-        @connect
         async def establish(websocket: websockets.WebSocketClientProtocol) -> dict:
             payload = {
                 'op': 1,
@@ -64,7 +58,7 @@ class DiscordBot:
             }
             await websocket.send(json.dumps(payload))
             response = json.loads(await websocket.recv())
-            return response
+            return [websocket, payload]
         
         async def heartbeat(websocket: websockets.WebSocketClientProtocol) -> dict:
             payload = {
@@ -134,15 +128,15 @@ class DiscordBot:
             return response
 
         timestamp = lambda : time.strftime('%y-%m-%d %H:%M:%S')
-        error_message = lambda msg: print(f'\033[091m{msg}\033[0m')
-        system_mesasge = lambda msg: print(f'\033[092m{msg}\033[0m')
+        error_message = lambda msg: print(f'\033[091m[{timestamp()}] {msg}\033[0m')
+        system_mesasge = lambda msg: print(f'\033[092m[{timestamp()}] {msg}\033[0m')
 
-        async with websockets.connect(self.gateway_url) as ws:
+        async with websockets.connect(self.gateway_url, ping_timeout=None) as ws:
             try:
                 response = await establish(websocket=ws)
-                system_mesasge(f'[{timestamp()}] Establish connection with Gateway.')
+                system_mesasge(f'Establish connection with Gateway.')
                 response = await identify(websocket=ws)
-                system_mesasge(f'[{timestamp()}] Send Identify with intents.')
+                system_mesasge(f'Send Identify with intents.')
                 while True:
                     response = json.loads(await ws.recv())
                     opcode = response['op']
@@ -151,9 +145,11 @@ class DiscordBot:
                             gateway_event = response['t']
                             match gateway_event:
                                 case 'READY':
+                                    await self.send_messages('1023644509168484413', 'ya feel so good')
+                                    self.application_id = response['d']['application']['id']
                                     self.session_id = response['d']['session_id']
                                     self.seq = response['s']
-                                    system_mesasge(f'[{timestamp()}] Ready to work')
+                                    system_mesasge(f'Ready to work')
                                 case 'GUILD_CREATE':
                                     data = response['d']
                                     self.guild_info = self.GuildInfo(
@@ -166,22 +162,39 @@ class DiscordBot:
                                         emojis=data['emojis'], 
                                         stickers=data['stickers'],
                                     )
-                                    system_mesasge(f'[{timestamp()}] Succesfully load guild information.')
+                                    system_mesasge('Succesfully load guild information.')
                         case 7:
-                            system_mesasge(f'[{timestamp()}] Reconnecting.')
+                            system_mesasge('Reconnecting.')
                             await resume(websocket=ws)
-                            system_mesasge(f'[{timestamp()}] Reconnect successful.')
+                            system_mesasge(f'Reconnect successful.')
+                        case 9:
+                            error_message('Invalid session.')
+                            
+                            if self.last_sent_opcode == 2:
+                                error_message('the gateway could not initialize a session after receiving an Opcode 2 Identify.')
+                            elif self.last_sent_opcode == 6:
+                                error_message('the gateway could not resume a previous session after receiving an Opcode 6 Resume.')
+                            else:
+                                error_message('the gateway has invalidated an active session and is requesting client action.')
+                        
+                            if response['d']:
+                                system_mesasge('Reconnecting.')
+                                await resume(websocket=ws)
+                                system_mesasge(f'Reconnect successful.')
+                            else:
+                                system_mesasge('Session closed.')
+                                # 수정 예정
                         case 10:
                             if self.heartbeat_interval == 0:
-                                system_mesasge(f'[{timestamp()}] Begin Heartbeat interval.')
+                                system_mesasge('Begin Heartbeat interval.')
                             else:
-                                system_mesasge(f'[{timestamp()}] Hello.')
+                                system_mesasge('Hello.')
                             self.heartbeat_interval = response['d']['heartbeat_interval']
                             await heartbeat(websocket=ws)
                         case 11:
-                            system_mesasge(f'[{timestamp()}] Heartbeat ACK.')
+                            system_mesasge('Heartbeat ACK.')
             except Exception as e:
-                 error_message(f'[{timestamp()}] {e}')
+                 error_message(f'{e}')
             finally:
                 await ws.close()
 
