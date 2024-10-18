@@ -1,0 +1,6 @@
+.venv/
+.vscode/
+.gitconfig
+.gitignore
+server_info.json
+test.py
