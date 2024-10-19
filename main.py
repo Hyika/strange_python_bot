@@ -58,7 +58,7 @@ class DiscordBot:
             }
             await websocket.send(json.dumps(payload))
             response = json.loads(await websocket.recv())
-            return response
+            return [websocket, payload]
         
         async def heartbeat(websocket: websockets.WebSocketClientProtocol) -> dict:
             payload = {
@@ -166,25 +166,7 @@ class DiscordBot:
                         case 7:
                             system_mesasge('Reconnecting.')
                             await resume(websocket=ws)
-                            system_mesasge(f'Reconnect successful.')
-                        case 9:
-                            error_message('Invalid session.')
-                            
-                            if self.last_sent_opcode == 2:
-                                error_message('the gateway could not initialize a session after receiving an Opcode 2 Identify.')
-                            elif self.last_sent_opcode == 6:
-                                error_message('the gateway could not resume a previous session after receiving an Opcode 6 Resume.')
-                            else:
-                                error_message('the gateway has invalidated an active session and is requesting client action.')
-                        
-                            if response['d']:
-                                system_mesasge('Reconnecting.')
-                                await resume(websocket=ws)
-                                system_mesasge(f'Reconnect successful.')
-                            else:
-                                system_mesasge('Session closed.')
-                                # 수정 예정
-                            system_mesasge(f'Reconnect successful.')
+                            system_mesasge(f'[{timestamp()}] Reconnect successful.')
                         case 10:
                             if self.heartbeat_interval == 0:
                                 system_mesasge('Begin Heartbeat interval.')
