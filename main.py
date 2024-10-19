@@ -16,7 +16,7 @@ class DiscordBot:
         
         settings = load_settings_json(path=json_file_path)
         self.base_url = 'https://discord.com/api/v10'
-        self.gateway_url = 'wss://gateway.discord.gg/'
+        self.gateway_url = 'wss://gateway.discord.gg/?v=10&encoding=json'
         self.token = settings['token']
         self.prefix = settings['command_prefix']
         self.auth_headers = {
@@ -51,25 +51,21 @@ class DiscordBot:
 
 
     async def gateway_connection(self):
-        async def establish(websocket: websockets.WebSocketClientProtocol) -> dict:
+        async def establish(websocket: websockets.WebSocketClientProtocol):
             payload = {
                 'op': 1,
                 'd': None,
             }
             await websocket.send(json.dumps(payload))
-            response = json.loads(await websocket.recv())
-            return [websocket, payload]
         
-        async def heartbeat(websocket: websockets.WebSocketClientProtocol) -> dict:
+        async def heartbeat(websocket: websockets.WebSocketClientProtocol):
             payload = {
                 'op': 1,
                 'd': self.seq,
             }
             await websocket.send(json.dumps(payload))
-            response = json.loads(await websocket.recv())
-            return response
         
-        async def identify(websocket: websockets.WebSocketClientProtocol) -> dict:
+        async def identify(websocket: websockets.WebSocketClientProtocol):
             payload = {
                 'op': 2, 
                 'd': {
@@ -94,13 +90,11 @@ class DiscordBot:
                 }
             }
             await websocket.send(json.dumps(payload))
-            response = json.loads(await websocket.recv())
-            return response
 
         async def update_presence(websocket:websockets.WebSocketClientProtocol, 
                                   activities: list, 
                                   status: str, 
-                                  afk: bool) -> dict:
+                                  afk: bool):
             payload = {
                 'op': 3,
                 'd': {
@@ -111,10 +105,8 @@ class DiscordBot:
                 }
             }
             await websocket.send(json.dumps(payload))
-            response = json.loads(await websocket.recv())
-            return response
 
-        async def resume(websocket:websockets.WebSocketClientProtocol) -> dict:
+        async def resume(websocket:websockets.WebSocketClientProtocol):
             payload = {
                 'op': 6,
                 'd': {
@@ -124,8 +116,6 @@ class DiscordBot:
                 }
             }
             await websocket.send(json.dumps(payload))
-            response = json.loads(await websocket.recv())
-            return response
 
         timestamp = lambda : time.strftime('%y-%m-%d %H:%M:%S')
         error_message = lambda msg: print(f'\033[091m[{timestamp()}] {msg}\033[0m')
@@ -133,19 +123,20 @@ class DiscordBot:
 
         async with websockets.connect(self.gateway_url, ping_timeout=None) as ws:
             try:
-                response = await establish(websocket=ws)
+                await establish(websocket=ws)
                 system_mesasge(f'Establish connection with Gateway.')
-                response = await identify(websocket=ws)
+                await identify(websocket=ws)
                 system_mesasge(f'Send Identify with intents.')
+
                 while True:
                     response = json.loads(await ws.recv())
+                    print(response)
                     opcode = response['op']
                     match opcode:
                         case 0:
                             gateway_event = response['t']
                             match gateway_event:
                                 case 'READY':
-                                    await self.send_messages('1023644509168484413', 'ya feel so good')
                                     self.application_id = response['d']['application']['id']
                                     self.session_id = response['d']['session_id']
                                     self.seq = response['s']
@@ -163,10 +154,30 @@ class DiscordBot:
                                         stickers=data['stickers'],
                                     )
                                     system_mesasge('Succesfully load guild information.')
+                        case 1:
+                            system_mesasge('Heartbeat.')
+                            await heartbeat(websocket=ws)
                         case 7:
                             system_mesasge('Reconnecting.')
                             await resume(websocket=ws)
                             system_mesasge(f'[{timestamp()}] Reconnect successful.')
+                        case 9:
+                            error_message('Invalid Session.')
+                            if self.last_sent_opcode == 2:
+                                error_message('the gateway could not initialize a session after receiving an Opcode 2 Identify')
+                            elif self.last_sent_opcode == 6:
+                                error_message('the gateway could not resume a previous session after receiving an Opcode 6 Resume')
+                            else:
+                                error_message('the gateway has invalidated an active session and is requesting client action')
+                            
+                            if response['d']:
+                                response = {
+                                    'op': 7, 
+                                    'd': None,
+                                }
+                            else:
+                                error_message('Session Lost.')
+                                break
                         case 10:
                             if self.heartbeat_interval == 0:
                                 system_mesasge('Begin Heartbeat interval.')
@@ -176,6 +187,7 @@ class DiscordBot:
                             await heartbeat(websocket=ws)
                         case 11:
                             system_mesasge('Heartbeat ACK.')
+                        
             except Exception as e:
                  error_message(f'{e}')
             finally:
