@@ -3,85 +3,265 @@ import asyncio
 import websockets
 import json
 import time
-from functools import wraps
-from threading import Thread
 
 
+# bot main
 class DiscordBot:
-    def __init__(self, json_file_path:str) -> None:
-        def load_settings_json(path: str) -> dict:
-            with open(path, 'r') as f:
-                settings = json.load(f)
-            return settings
+    def __init__(self):
+        self.guild = None
         
-        settings = load_settings_json(path=json_file_path)
-        self.base_url = 'https://discord.com/api/v10'
-        self.gateway_url = 'wss://gateway.discord.gg/?v=10&encoding=json'
-        self.token = settings['token']
-        self.prefix = settings['command_prefix']
-        self.auth_headers = {
-            'Authorization': f'Bot {self.token}',
-        }
-        
-        self.last_sent_opcode = -1
-        self.heartbeat_interval = 0
-        self.seq = 0
-        self.application_id = None
-        self.session_id = None
-        self.guild_info = None
+    def run(self):
+        Client.run()
     
-    class GuildInfo:
-        def __init__(self, 
-                     guild_id: str,
-                     name: str, 
-                     channels: list, 
-                     members: list, 
-                     soundboard_sounds: list, 
-                     roles: list, 
-                     emojis: list, 
-                     stickers: list):
-            self.guild_id = guild_id
-            self.name = name
-            self.channels = channels
-            self.members = members
-            self.soundboard_sounds = soundboard_sounds
-            self.roles = roles
-            self.emojis = emojis
-            self.stickers = stickers
+    class UserSetting:
+        with open(r'./user_setting.json', 'r') as f:
+            user_setting = json.load(f)
 
+        TOKEN = user_setting['token']
+        PREFIX = user_setting['command_prefix']
 
-    async def gateway_connection(self):
-        async def establish(websocket: websockets.WebSocketClientProtocol):
+    class Guild:
+        def __init__(self, guild_data:dict):
+            self.activity_instances = guild_data['activity_instances']
+            self.afk_channel_id = guild_data['afk_channel_id']
+            self.afk_timeout = guild_data['afk_timeout']
+            self.application_command_counts = guild_data['application_command_counts']
+            self.application_id = guild_data['application_id']
+            self.banner = guild_data['banner']
+            self.channels = self.channel_tree(guild_data['channels'])
+
+        def channel_tree(self, channels: list):
+            parent_channels = []
+            for channel in channels:
+                parent_id = channel.get('parent_id')
+                if parent_id is None:   # parent channel
+                    parent_channel = self.Channel(channel_data=channel)
+                    parent_channels.append(parent_channel)
+                else:                   # child channel
+                    for parent_channel in parent_channels:
+                        if parent_channel.id == parent_id:
+                            if channel.get('bitrate') is None:
+                                text_channel = self.Channel.TextChannel(text_chl_data=channel)
+                                parent_channel.child_text_channel.append(text_channel)
+                            else:
+                                voice_channel = self.Channel.VoiceChanel(voice_chl_data=channel)
+                                parent_channel.child_voice_channel.append(voice_channel)
+            
+            return parent_channels
+
+        class Channel:
+            def __init__(self, channel_data):
+                self.flags = channel_data['flags']
+                self.id = channel_data['id']
+                self.name = channel_data['name']
+                self.permission_overwrites = channel_data['permission_overwrites']
+                self.position = channel_data['position']
+                self.type = channel_data['type']
+                self.version = channel_data['version']
+                self.child_text_channel = []
+                self.child_voice_channel = []
+
+            class TextChannel:
+                def __init__(self, text_chl_data):
+                    self.default_thread_rate_limit_per_user = text_chl_data['default_thread_rate_limit_per_user']
+                    self.flags = text_chl_data['flags']
+                    self.icon_emoji = text_chl_data['icon_emoji']
+                    self.id = text_chl_data['id']
+                    self.last_message_id = text_chl_data['last_message_id']
+                    self.name = text_chl_data['name']
+                    self.parent_id = text_chl_data['parent_id']
+                    self.permission_overwrites = text_chl_data['permission_overwrites'] # dict
+                    self.position = text_chl_data['position']
+                    self.rate_limit_per_user = text_chl_data['rate_limit_per_user']
+                    self.topic = text_chl_data['topic']
+                    self.type = text_chl_data['type']
+                    self.version = text_chl_data['version']
+
+            class VoiceChanel:
+                def __init__(self, voice_chl_data):
+                    self.bitrate = voice_chl_data['bitrate']
+                    self.flags = voice_chl_data['flags']
+                    self.icon_emoji = voice_chl_data['icon_emoji'] # dict
+                    self.id = voice_chl_data['id']
+                    self.last_message_id = voice_chl_data['last_message_id']
+                    self.name = voice_chl_data['name']
+                    self.parent_id = voice_chl_data['parent_id']
+                    self.permission_overwrites = voice_chl_data['permission_overwrites']
+                    self.position = voice_chl_data['position']
+                    self.rate_limit_per_user = voice_chl_data['rate_limit_per_user']
+                    self.rtc_region = voice_chl_data['rtc_region']
+                    self.type = voice_chl_data['type']
+                    self.user_limit = voice_chl_data['user_limit']
+                    self.version = voice_chl_data['version']
+
+class Client(DiscordBot):
+    def __init__(self):
+        super().__init__()
+
+    @staticmethod
+    def run():
+        gateway = GatewayConnection()
+        asyncio.run(gateway.connect())
+
+    @staticmethod
+    def message(msg, tag:str=None):
+        match tag:
+            case 'gateway_send':
+                color = '\033[092m'
+            case 'gateway_recv':
+                color = '\033[093m'
+            case 'error':
+                color = '\033[091m'
+            case 'bot_recv':
+                color = '\033[094m'
+            case _:
+                color = '\033[0m'
+
+        print((f'{color}[{time.strftime('%y-%m-%d %H:%M:%S')}] {msg}\033[0m'))
+
+class GatewayConnection:
+    def __init__(self):
+        self.gateway_url = 'wss://gateway.discord.gg/?v=10&encoding=json'
+        self.heartbeat_interval = 0
+        self.websocket = None
+        self.payload = self.EventPayload()
+        self.session_id = None
+
+    async def connect(self):
+        self.websocket = await websockets.connect(self.gateway_url, ping_timeout=None)
+        Client.message(msg='[-->] Create websocket and establish connection with Gateway.', tag='gateway_send')
+        await self.receive()
+
+        await self.send(self.EventPayload.heartbeat())
+        Client.message(msg='[-->] Begin Heartbeat interval', tag='gateway_send')
+        await self.receive()
+
+        await self.send(self.EventPayload.identify(DiscordBot.UserSetting.TOKEN))
+        Client.message(msg='[-->] Send Identify with intents.', tag='gateway_send')
+        await self.receive()
+
+        await self.send(self.EventPayload.heartbeat())
+        Client.message(msg='[-->] Send Guild information.', tag='gateway_send')
+        await self.receive()
+
+        while True:
+            await self.receive()
+
+    async def close(self):
+        await self.websocket.close()
+    
+    async def send(self, payload):
+        await self.websocket.send(json.dumps(payload))
+
+    async def receive(self):
+        payload = json.loads(await self.websocket.recv())
+        #print(payload)
+
+        op = payload['op']
+        s = payload['s']
+        t = payload['t']
+        d = payload['d']
+
+        match op:
+            case 0:
+                if t == 'READY':
+                    
+                elif t == 'GUILD_CREATE':
+                    #self.guild = Client.Guild(d)
+
+                elif t == 'MESSAGE_CREATE':
+                    current_channel_id = d['channel_id']
+                    member_info = d['member']
+                    #event
+            case 1:
+                self.send(self.EventPayload.heartbeat())
+            case 10:
+                Client.message(msg='[<--] Received Hello event.', tag='gateway_recv')
+                self.heartbeat_interval = d['heartbeat_interval']
+            case 11:
+                Client.message(msg='[<--] Received Heartbeat ACK event.', tag='gateway_recv')
+    
+    class Events:
+        @classmethod
+        def event(cls, received_event, received_data):
+            match received_event:
+                case 'READY':
+                    Client.message(msg='[<--] Received Ready event.', tag='gateway_recv')
+                    cls.ready(session_id=received_data['session_id'],
+                              resume_gateway_url=received_data['resume_gateway_url'])
+                case 'GUILD_CREATE':
+                    Client.message(msg='[<--] GUILD CREATE.', tag='bot_recv')
+                    cls.guild_create()
+                case 'MESSAGE_CREATE':
+                    Client.message(msg='[<--] MESSAGE CREATE.', tag='bot_recv')
+                    cls.message_create()
+
+        def ready(self, session_id:str, resume_gateway_url:str):
+            self.session_id = session_id
+            self.gateway_url = resume_gateway_url
+
+        def guild_create(self):
+            DiscordBot.Guild.channel_tree
+        
+
+    class EventPayload:
+        def __init__(self, op:int=-1, s:int=None, t:str=None, d:any=None):
+            self.__opcode = op
+            self.__seq_num = s
+            self.__event_name = t
+            self.__event_data = d
+
+        def is_empty(self):
+            if self.__opcode == -1:
+                return True
+            elif self.__opcode > -1:
+                return False
+            else:
+                raise Exception
+
+        @property
+        def getter(self):
+            payload = {
+                'op': self.__opcode,
+                's': self.__seq_num,
+                't': self.__event_name,
+                'd': self.__event_data,
+            }
+            return payload
+        
+        @getter.setter
+        def setter(self, payload:dict):
+            self.__opcode = payload['op']
+            self.__seq_num = payload['s']
+            self.__event_name = payload['t']
+            self.__event_data = payload['d']
+
+        @staticmethod
+        def heartbeat(last_seq_num:int=None):
             payload = {
                 'op': 1,
-                'd': None,
+                'd': last_seq_num
             }
-            await websocket.send(json.dumps(payload))
+            return payload
         
-        async def heartbeat(websocket: websockets.WebSocketClientProtocol):
-            payload = {
-                'op': 1,
-                'd': self.seq,
-            }
-            await websocket.send(json.dumps(payload))
-        
-        async def identify(websocket: websockets.WebSocketClientProtocol):
+        @staticmethod
+        def identify(token):
             payload = {
                 'op': 2, 
                 'd': {
-                    'token': self.token,
+                    'token': token,
                     'intents': 513,
                     'properties': {
                         'os': 'linux',
-                        'browser': 'firefox',
-                        'device': 'firefox',
+                        'browser': 'disco',
+                        'device': 'disco',
                     },
                     'presence': {
                         'since': None,
                         'activities': [{
-                            'name': '리부트서버를 정상화',
+                            'name': '디버깅',
                             'type': 0,
-                            'state': 'write state.',
+                            'state': 'feel so good',
                             'url': None, # stream url, is validated when type is 1.
                         }],
                         'status': 'Online', # online, dnd, idle, invisible, offline ...
@@ -89,12 +269,10 @@ class DiscordBot:
                     },
                 }
             }
-            await websocket.send(json.dumps(payload))
-
-        async def update_presence(websocket:websockets.WebSocketClientProtocol, 
-                                  activities: list, 
-                                  status: str, 
-                                  afk: bool):
+            return payload
+            
+        @staticmethod
+        def update_presence(activities: list, status: str, afk: bool):
             payload = {
                 'op': 3,
                 'd': {
@@ -104,111 +282,27 @@ class DiscordBot:
                     'afk': afk,
                 }
             }
-            await websocket.send(json.dumps(payload))
+            return payload
 
-        async def resume(websocket:websockets.WebSocketClientProtocol):
+        @staticmethod
+        def resume(last_seq:int, last_session_id:int):
             payload = {
                 'op': 6,
                 'd': {
-                    'token': self.token,
-                    'session_id': self.session_id,
-                    'seq': self.seq,
+                    'token': DiscordBot.UserSetting.TOKEN,
+                    'session_id': last_session_id,
+                    'seq': last_seq
                 }
             }
-            await websocket.send(json.dumps(payload))
+            return payload
+    
+class HttpConnection:
+    def __init__(self):
+        self.connect = None
 
-        timestamp = lambda : time.strftime('%y-%m-%d %H:%M:%S')
-        error_message = lambda msg: print(f'\033[091m[{timestamp()}] {msg}\033[0m')
-        system_mesasge = lambda msg: print(f'\033[092m[{timestamp()}] {msg}\033[0m')
 
-        async with websockets.connect(self.gateway_url, ping_timeout=None) as ws:
-            try:
-                await establish(websocket=ws)
-                system_mesasge(f'Establish connection with Gateway.')
-                await identify(websocket=ws)
-                system_mesasge(f'Send Identify with intents.')
-
-                while True:
-                    response = json.loads(await ws.recv())
-                    print(response)
-                    opcode = response['op']
-                    match opcode:
-                        case 0:
-                            gateway_event = response['t']
-                            match gateway_event:
-                                case 'READY':
-                                    self.application_id = response['d']['application']['id']
-                                    self.session_id = response['d']['session_id']
-                                    self.seq = response['s']
-                                    system_mesasge(f'Ready to work')
-                                case 'GUILD_CREATE':
-                                    data = response['d']
-                                    self.guild_info = self.GuildInfo(
-                                        guild_id=data['id'],
-                                        name=data['name'], 
-                                        channels=data['channels'], 
-                                        members=data['members'], 
-                                        soundboard_sounds=data['soundboard_sounds'], 
-                                        roles=data['roles'], 
-                                        emojis=data['emojis'], 
-                                        stickers=data['stickers'],
-                                    )
-                                    system_mesasge('Succesfully load guild information.')
-                        case 1:
-                            system_mesasge('Heartbeat.')
-                            await heartbeat(websocket=ws)
-                        case 7:
-                            system_mesasge('Reconnecting.')
-                            await resume(websocket=ws)
-                            system_mesasge(f'[{timestamp()}] Reconnect successful.')
-                        case 9:
-                            error_message('Invalid Session.')
-                            if self.last_sent_opcode == 2:
-                                error_message('the gateway could not initialize a session after receiving an Opcode 2 Identify')
-                            elif self.last_sent_opcode == 6:
-                                error_message('the gateway could not resume a previous session after receiving an Opcode 6 Resume')
-                            else:
-                                error_message('the gateway has invalidated an active session and is requesting client action')
-                            
-                            if response['d']:
-                                response = {
-                                    'op': 7, 
-                                    'd': None,
-                                }
-                            else:
-                                error_message('Session Lost.')
-                                break
-                        case 10:
-                            if self.heartbeat_interval == 0:
-                                system_mesasge('Begin Heartbeat interval.')
-                            else:
-                                system_mesasge('Hello.')
-                            self.heartbeat_interval = response['d']['heartbeat_interval']
-                            await heartbeat(websocket=ws)
-                        case 11:
-                            system_mesasge('Heartbeat ACK.')
-                        
-            except Exception as e:
-                 error_message(f'{e}')
-            finally:
-                await ws.close()
-
-    async def send_messages(self, channel_id: str, message: str):
-        url = self.base_url+ f'/channels/{channel_id}/messages'
-        msg = {'content': message}
-
-        async with aiohttp.ClientSession(headers=bot.auth_headers) as session:
-            try:
-                async with session.post(url=url, data=msg) as response:
-                    response.raise_for_status()
-            except Exception as e:
-                print(e)
-            finally:
-                await session.close()
 
 
 if __name__ == '__main__':
-    SETTINGS_JSON = r'user_settings.json'
-    bot = DiscordBot(SETTINGS_JSON)
-    asyncio.get_event_loop().run_until_complete(bot.gateway_connection())
-    asyncio.get_event_loop().close()
+    bot = DiscordBot()
+    bot.run()

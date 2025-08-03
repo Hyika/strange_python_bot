@@ -1,0 +1,754 @@
+{
+    "d": {
+        "activity_instances": [],
+        "afk_channel_id": "959766649492340778",
+        "afk_timeout": 300,
+        "application_command_counts": {},
+        "application_id": null,
+        "banner": null,
+        "channels": [
+            {
+                "flags": 0,
+                "id": "654678230539698197",
+                "name": "👋핑크빈 광장",
+                "permission_overwrites": [],
+                "position": 0,
+                "type": 4,
+                "version": 1664125213356
+            },
+            {
+                "flags": 0,
+                "id": "654678230539698198",
+                "name": "🤹핑크빈 대화방",
+                "permission_overwrites": [],
+                "position": 1,
+                "type": 4,
+                "version": 1664125311429
+            },
+            {
+                "bitrate": 64000,
+                "flags": 0,
+                "icon_emoji": {
+                    "id": null,
+                    "name": "⏰"
+                },
+                "id": "959766649492340778",
+                "last_message_id": null,
+                "name": "⌛Zzz...",
+                "parent_id": "654678230539698198",
+                "permission_overwrites": [],
+                "position": 1,
+                "rate_limit_per_user": 0,
+                "rtc_region": null,
+                "status": null,
+                "type": 2,
+                "user_limit": 0,
+                "version": 1701949384578
+            },
+            {
+                "bitrate": 64000,
+                "flags": 0,
+                "icon_emoji": {
+                    "id": null,
+                    "name": "🗣️"
+                },
+                "id": "974663658682609704",
+                "last_message_id": "1350493151630069790",
+                "name": "🔊Only Talk",
+                "parent_id": "654678230539698198",
+                "permission_overwrites": [],
+                "position": 0,
+                "rate_limit_per_user": 0,
+                "rtc_region": null,
+                "status": null,
+                "type": 2,
+                "user_limit": 0,
+                "version": 1701949384586
+            },
+            {
+                "default_thread_rate_limit_per_user": 0,
+                "flags": 0,
+                "icon_emoji": {
+                    "id": null,
+                    "name": "👋"
+                },
+                "id": "1023635119614984242",
+                "last_message_id": "1295394487899652146",
+                "name": "👋say-hello",
+                "parent_id": "654678230539698197",
+                "permission_overwrites": [
+                    {
+                        "allow": "1088",
+                        "deny": "1760303889512465",
+                        "id": "654678230539698196",
+                        "type": 0
+                    }
+                ],
+                "position": 0,
+                "rate_limit_per_user": 0,
+                "topic": "여기선 대화 금지",
+                "type": 0,
+                "version": 1730120844091
+            },
+            {
+                "flags": 0,
+                "id": "1023639352049414144",
+                "name": "🎮PlayerUnknown's Battlegrounds",
+                "permission_overwrites": [],
+                "position": 3,
+                "type": 4,
+                "version": 1727785221254
+            },
+            {
+                "default_thread_rate_limit_per_user": 0,
+                "flags": 0,
+                "icon_emoji": {
+                    "id": null,
+                    "name": "💬"
+                },
+                "id": "1023639489748402207",
+                "last_message_id": "1091762526389272637",
+                "name": "battlegrounds-chat",
+                "parent_id": "1023639352049414144",
+                "permission_overwrites": [
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023629990086062141",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023630068368560219",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023630038437990522",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023629893449297950",
+                        "type": 0
+                    },
+                    {
+                        "allow": "0",
+                        "deny": "1024",
+                        "id": "654678230539698196",
+                        "type": 0
+                    }
+                ],
+                "position": 4,
+                "rate_limit_per_user": 0,
+                "topic": "배그챈",
+                "type": 0,
+                "version": 1730120475010
+            },
+            {
+                "bitrate": 64000,
+                "flags": 0,
+                "icon_emoji": {
+                    "id": null,
+                    "name": "🎙️"
+                },
+                "id": "1023639517149790458",
+                "last_message_id": null,
+                "name": "battlegrounds-voice",
+                "parent_id": "1023639352049414144",
+                "permission_overwrites": [
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023629990086062141",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023630068368560219",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023630038437990522",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023629893449297950",
+                        "type": 0
+                    },
+                    {
+                        "allow": "0",
+                        "deny": "1049600",
+                        "id": "654678230539698196",
+                        "type": 0
+                    }
+                ],
+                "position": 3,
+                "rate_limit_per_user": 0,
+                "rtc_region": null,
+                "type": 2,
+                "user_limit": 0,
+                "version": 1730120486738
+            },
+            {
+                "flags": 0,
+                "id": "1023639803918565538",
+                "name": "🌈RainbowSix Siege",
+                "permission_overwrites": [],
+                "position": 4,
+                "type": 4,
+                "version": 1718199099844
+            },
+            {
+                "default_thread_rate_limit_per_user": 0,
+                "flags": 0,
+                "icon_emoji": {
+                    "id": null,
+                    "name": "🎮"
+                },
+                "id": "1023639901801025586",
+                "last_message_id": "1304085039851769878",
+                "name": "rainbowsixsiege-chat",
+                "parent_id": "1023639803918565538",
+                "permission_overwrites": [
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023629990086062141",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023630068368560219",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023630038437990522",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023629893449297950",
+                        "type": 0
+                    },
+                    {
+                        "allow": "0",
+                        "deny": "1024",
+                        "id": "654678230539698196",
+                        "type": 0
+                    }
+                ],
+                "position": 5,
+                "rate_limit_per_user": 0,
+                "topic": "레인보우식스시즈 채널입니다.\n레인보우식스시즈 대화방",
+                "type": 0,
+                "version": 1730120439808
+            },
+            {
+                "bitrate": 64000,
+                "flags": 0,
+                "icon_emoji": {
+                    "id": null,
+                    "name": "🎮"
+                },
+                "id": "1023639927252058253",
+                "last_message_id": "1218236825664225321",
+                "name": "rainbowsixsiege-voice",
+                "parent_id": "1023639803918565538",
+                "permission_overwrites": [
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023629990086062141",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023630068368560219",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023630038437990522",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023629893449297950",
+                        "type": 0
+                    },
+                    {
+                        "allow": "0",
+                        "deny": "1049600",
+                        "id": "654678230539698196",
+                        "type": 0
+                    }
+                ],
+                "position": 4,
+                "rate_limit_per_user": 0,
+                "rtc_region": null,
+                "type": 2,
+                "user_limit": 0,
+                "version": 1730120452736
+            },
+            {
+                "default_thread_rate_limit_per_user": 0,
+                "flags": 0,
+                "icon_emoji": {
+                    "id": null,
+                    "name": "💬"
+                },
+                "id": "1023641019557871677",
+                "last_message_id": "1351096843823480864",
+                "name": "🤔chat-together",
+                "parent_id": "654678230539698198",
+                "permission_overwrites": [],
+                "position": 2,
+                "rate_limit_per_user": 0,
+                "topic": "정치/사회/노무현/게임/그 외 취미 이야기 가능\n단, 말한 후의 책임은 당신의 몫",
+                "type": 0,
+                "version": 1701949384616
+            },
+            {
+                "default_thread_rate_limit_per_user": 0,
+                "flags": 0,
+                "icon_emoji": {
+                    "id": null,
+                    "name": "🤖"
+                },
+                "id": "1023644509168484413",
+                "last_message_id": "1297272769502777436",
+                "name": "🤖bot-command",
+                "parent_id": "654678230539698197",
+                "permission_overwrites": [
+                    {
+                        "allow": "0",
+                        "deny": "1024",
+                        "id": "654678230539698196",
+                        "type": 0
+                    }
+                ],
+                "position": 1,
+                "rate_limit_per_user": 0,
+                "topic": "봇 명령어만 입력",
+                "type": 0,
+                "version": 1701949384623
+            },
+            {
+                "flags": 0,
+                "id": "1026040752033239060",
+                "name": "🕹종합게임방",
+                "permission_overwrites": [],
+                "position": 2,
+                "type": 4,
+                "version": 1718199099819
+            },
+            {
+                "default_thread_rate_limit_per_user": 0,
+                "flags": 0,
+                "icon_emoji": {
+                    "id": null,
+                    "name": "🎮"
+                },
+                "id": "1026041032653160448",
+                "last_message_id": "1289560969588113418",
+                "name": "game-chat",
+                "parent_id": "1026040752033239060",
+                "permission_overwrites": [
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023629990086062141",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023630068368560219",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023630038437990522",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1024",
+                        "deny": "0",
+                        "id": "1023629893449297950",
+                        "type": 0
+                    },
+                    {
+                        "allow": "0",
+                        "deny": "1024",
+                        "id": "654678230539698196",
+                        "type": 0
+                    }
+                ],
+                "position": 3,
+                "rate_limit_per_user": 0,
+                "topic": null,
+                "type": 0,
+                "version": 1718199099902
+            },
+            {
+                "bitrate": 64000,
+                "flags": 0,
+                "icon_emoji": {
+                    "id": null,
+                    "name": "🎮"
+                },
+                "id": "1026041110914678864",
+                "last_message_id": "1323387615382212699",
+                "name": "game-voice",
+                "parent_id": "1026040752033239060",
+                "permission_overwrites": [
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023629990086062141",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023630068368560219",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023630038437990522",
+                        "type": 0
+                    },
+                    {
+                        "allow": "1049600",
+                        "deny": "0",
+                        "id": "1023629893449297950",
+                        "type": 0
+                    },
+                    {
+                        "allow": "0",
+                        "deny": "1049600",
+                        "id": "654678230539698196",
+                        "type": 0
+                    }
+                ],
+                "position": 2,
+                "rate_limit_per_user": 0,
+                "rtc_region": null,
+                "status": null,
+                "type": 2,
+                "user_limit": 0,
+                "version": 1718199099980
+            }
+        ],
+        "clan": null,
+        "default_message_notifications": 0,
+        "description": null,
+        "discovery_splash": null,
+        "embedded_activities": [],
+        "emojis": [],
+        "explicit_content_filter": 0,
+        "features": [
+            "CHANNEL_ICON_EMOJIS_GENERATED",
+            "SOUNDBOARD"
+        ],
+        "guild_scheduled_events": [],
+        "home_header": null,
+        "hub_type": null,
+        "icon": "41653aa20aeec330dcef480ec6246126",
+        "id": "654678230539698196",
+        "incidents_data": null,
+        "inventory_settings": null,
+        "joined_at": "2024-10-14T09:44:14.268000+00:00",
+        "large": false,
+        "latest_onboarding_question_id": null,
+        "lazy": true,
+        "max_members": 500000,
+        "max_stage_video_channel_users": 50,
+        "max_video_channel_users": 25,
+        "member_count": 11,
+        "members": [
+            {
+                "avatar": null,
+                "banner": null,
+                "communication_disabled_until": null,
+                "deaf": false,
+                "flags": 0,
+                "joined_at": "2024-10-14T09:44:14.268000+00:00",
+                "mute": false,
+                "nick": null,
+                "pending": false,
+                "premium_since": null,
+                "roles": [
+                    "1295321259667886123"
+                ],
+                "user": {
+                    "avatar": "b236223aa510c49232a6c23159a8230a",
+                    "avatar_decoration_data": null,
+                    "bot": true,
+                    "clan": null,
+                    "discriminator": "3060",
+                    "display_name": null,
+                    "global_name": null,
+                    "id": "1295320160701382708",
+                    "primary_guild": null,
+                    "public_flags": 0,
+                    "username": "CutePinkBean"
+                }
+            }
+        ],
+        "mfa_level": 0,
+        "name": "PinkBeans\"🎶",
+        "nsfw": false,
+        "nsfw_level": 0,
+        "owner_id": "281109640580956174",
+        "preferred_locale": "en-US",
+        "premium_progress_bar_enabled": false,
+        "premium_subscription_count": 0,
+        "premium_tier": 0,
+        "presences": [],
+        "profile": null,
+        "public_updates_channel_id": null,
+        "region": "deprecated",
+        "roles": [
+            {
+                "color": 0,
+                "flags": 0,
+                "hoist": false,
+                "icon": null,
+                "id": "654678230539698196",
+                "managed": false,
+                "mentionable": false,
+                "name": "@everyone",
+                "permissions": "2248473465839169",
+                "position": 0,
+                "tags": {},
+                "unicode_emoji": null,
+                "version": 0
+            },
+            {
+                "color": 3447003,
+                "flags": 0,
+                "hoist": false,
+                "icon": null,
+                "id": "1023629893449297950",
+                "managed": false,
+                "mentionable": false,
+                "name": "Lv. 1",
+                "permissions": "1071631556161",
+                "position": 9,
+                "tags": {},
+                "unicode_emoji": null,
+                "version": 1702640522473
+            },
+            {
+                "color": 3066993,
+                "flags": 0,
+                "hoist": false,
+                "icon": null,
+                "id": "1023629990086062141",
+                "managed": false,
+                "mentionable": false,
+                "name": "Lv. 2",
+                "permissions": "9868865429057",
+                "position": 8,
+                "tags": {},
+                "unicode_emoji": null,
+                "version": 1702640522469
+            },
+            {
+                "color": 15844367,
+                "flags": 0,
+                "hoist": false,
+                "icon": null,
+                "id": "1023630038437990522",
+                "managed": false,
+                "mentionable": false,
+                "name": "Lv. 3",
+                "permissions": "10968511274561",
+                "position": 7,
+                "tags": {},
+                "unicode_emoji": null,
+                "version": 1702640522464
+            },
+            {
+                "color": 15105570,
+                "flags": 0,
+                "hoist": false,
+                "icon": null,
+                "id": "1023630068368560219",
+                "managed": false,
+                "mentionable": false,
+                "name": "Lv. 4",
+                "permissions": "28569316613841",
+                "position": 6,
+                "tags": {},
+                "unicode_emoji": null,
+                "version": 1702640522459
+            },
+            {
+                "color": 15277667,
+                "flags": 0,
+                "hoist": false,
+                "icon": null,
+                "id": "1023630106159218708",
+                "managed": false,
+                "mentionable": false,
+                "name": "Lv. 5",
+                "permissions": "28587301797887",
+                "position": 5,
+                "tags": {},
+                "unicode_emoji": null,
+                "version": 1702640522454
+            },
+            {
+                "color": 10181046,
+                "flags": 0,
+                "hoist": false,
+                "icon": null,
+                "id": "1023630171493908572",
+                "managed": false,
+                "mentionable": false,
+                "name": "Lv. 0",
+                "permissions": "828965391936",
+                "position": 10,
+                "tags": {},
+                "unicode_emoji": null,
+                "version": 1702640522477
+            },
+            {
+                "color": 0,
+                "flags": 0,
+                "hoist": false,
+                "icon": null,
+                "id": "1295321259667886123",
+                "managed": true,
+                "mentionable": false,
+                "name": "CutePinkBean",
+                "permissions": "8",
+                "position": 1,
+                "tags": {
+                    "bot_id": "1295320160701382708"
+                },
+                "unicode_emoji": null,
+                "version": 1728899054256
+            }
+        ],
+        "rules_channel_id": null,
+        "safety_alerts_channel_id": null,
+        "soundboard_sounds": [
+            {
+                "available": true,
+                "emoji_id": null,
+                "emoji_name": null,
+                "guild_id": "654678230539698196",
+                "name": "예아",
+                "sound_id": "1099031914880438283",
+                "user_id": "281109640580956174",
+                "volume": 1.0
+            },
+            {
+                "available": true,
+                "emoji_id": null,
+                "emoji_name": null,
+                "guild_id": "654678230539698196",
+                "name": "어어",
+                "sound_id": "1099031977887285388",
+                "user_id": "281109640580956174",
+                "volume": 1.0
+            },
+            {
+                "available": true,
+                "emoji_id": null,
+                "emoji_name": null,
+                "guild_id": "654678230539698196",
+                "name": "따악~따악~",
+                "sound_id": "1099032928064901260",
+                "user_id": "281109640580956174",
+                "volume": 1.0
+            },
+            {
+                "available": true,
+                "emoji_id": null,
+                "emoji_name": null,
+                "guild_id": "654678230539698196",
+                "name": "조용히 합시다!",
+                "sound_id": "1099033730938568764",
+                "user_id": "281109640580956174",
+                "volume": 1.0
+            },
+            {
+                "available": true,
+                "emoji_id": null,
+                "emoji_name": null,
+                "guild_id": "654678230539698196",
+                "name": "좋다!",
+                "sound_id": "1099034674115903498",
+                "user_id": "281109640580956174",
+                "volume": 1.0
+            },
+            {
+                "available": true,
+                "emoji_id": null,
+                "emoji_name": null,
+                "guild_id": "654678230539698196",
+                "name": "아주빠르게",
+                "sound_id": "1099035475597074482",
+                "user_id": "281109640580956174",
+                "volume": 1.0
+            },
+            {
+                "available": true,
+                "emoji_id": null,
+                "emoji_name": null,
+                "guild_id": "654678230539698196",
+                "name": "북!",
+                "sound_id": "1100803218021290034",
+                "user_id": "281109640580956174",
+                "volume": 1.0
+            },
+            {
+                "available": true,
+                "emoji_id": null,
+                "emoji_name": null,
+                "guild_id": "654678230539698196",
+                "name": "왜!",
+                "sound_id": "1100803468484157561",
+                "user_id": "281109640580956174",
+                "volume": 0.36642158031463623
+            }
+        ],
+        "splash": null,
+        "stage_instances": [],
+        "stickers": [],
+        "system_channel_flags": 14,
+        "system_channel_id": "1023635119614984242",
+        "threads": [],
+        "unavailable": false,
+        "vanity_url_code": null,
+        "verification_level": 1,
+        "version": 1730120764279,
+        "voice_states": []
+    },
+    "op": 0,
+    "s": 2,
+    "t": "GUILD_CREATE"
+}
