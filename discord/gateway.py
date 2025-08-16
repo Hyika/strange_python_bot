@@ -3,13 +3,32 @@ import json
 import websockets
 import traceback
 
-class Gateway:
+class GatewayClient:
+    def __init__(self):
+        pass
+
+
+class DiscordWebsockets:
+    # opcode
+    DISPATCH                  = 0
+    HEARTBEAT                 = 1
+    IDENTIFY                  = 2
+    PRESENCE_UPDATE           = 3
+    VOICE_STATE_UPDATE        = 4
+    RESUME                    = 6
+    RECONNECT                 = 7
+    REQUEST_GUILD_MEMBERS     = 8
+    INVALID_SESSION           = 9
+    HELLO                     = 10
+    HEARTBEAT_ACK             = 11
+    REQUEST_SOUNDBOARD_SOUNDS = 31
+
     def __init__(self, token):
-        self.__token = token
-        self.url = "wss://gateway.discord.gg/?v=10&encoding=json"
+        self.token: str = token
+        self.ws: websockets.WebSocketClientProtocol = None
         self.session_id = None
-        self.heartbeat_interval = None
-        self.last_seq_num = None
+        self.heartbeat_interval: int = None
+        self.last_seq_num: int = None
 
     async def connect(self)-> None:
         try:
@@ -17,7 +36,7 @@ class Gateway:
                 uri=self.url, 
                 ping_timeout=None,
             )
-            self.websocket = ws
+            self.ws = ws
         except:
             print("websocket is already connected.")
 
@@ -58,7 +77,7 @@ class Gateway:
             payload={
                 "op": 2, 
                 "d": {
-                    "token": self.__token,
+                    "token": self.token,
                     "intents": 33281,
                     "properties": {
                         "os": "linux",

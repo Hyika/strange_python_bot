@@ -24,14 +24,7 @@ class minicord:
         """
         
     
-    # class Client:
-    #     @classmethod
-    #     def send_message(cls, channel_id:str, content:str):
-    #         url = f"{minicord.API_BASE_URL}/channels/{channel_id}/messages"
-    #         data = {"content": content}
-    #         print(data)
-    #         response = requests.post(url=url, headers=cls.headers, json=data)
-    #         print(f"Sent message: {response.status_code}, {response.text}")
+
 
     async def __execute(self, __token):
         try:
